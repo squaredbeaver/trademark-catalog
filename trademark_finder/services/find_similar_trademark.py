@@ -6,12 +6,12 @@ from trademark_finder.models.trademark import Trademark
 from trademark_finder.repositories.trademark import TrademarkRepository
 
 
-class FindSimilarTrademarkRequest(BaseModel):
+class FindSimilarTrademarkServiceRequest(BaseModel):
     title: str
     similarity: float = Field(gt=0, lt=1, default=0.5)
 
 
-class FindSimilarTrademarkResponse(BaseModel):
+class FindSimilarTrademarkServiceResponse(BaseModel):
     success: bool
     trademarks: list[Trademark]
 
@@ -19,11 +19,11 @@ class FindSimilarTrademarkResponse(BaseModel):
         return self.success
 
     @classmethod
-    def success_response(cls, trademarks: list[Trademark]) -> 'FindSimilarTrademarkResponse':
+    def success_response(cls, trademarks: list[Trademark]) -> 'FindSimilarTrademarkServiceResponse':
         return cls(success=True, trademarks=trademarks)
 
     @classmethod
-    def error_response(cls) -> 'FindSimilarTrademarkResponse':
+    def error_response(cls) -> 'FindSimilarTrademarkServiceResponse':
         return cls(success=False, trademarks=[])
 
 
@@ -36,7 +36,7 @@ class FindSimilarTrademarkService:
         self._trademark_repository = trademark_repository
         self._logger = logger
 
-    def find_similar_trademark(self, request: FindSimilarTrademarkRequest) -> FindSimilarTrademarkResponse:
+    async def find_similar_trademark(self, request: FindSimilarTrademarkServiceRequest) -> FindSimilarTrademarkServiceResponse:
         try:
             trademarks = await self._trademark_repository.find_similar(
                 title=request.title,
@@ -44,6 +44,6 @@ class FindSimilarTrademarkService:
             )
         except Exception as db_error:
             self._logger.error('Database error: %s', db_error)
-            return FindSimilarTrademarkResponse.error_response()
+            return FindSimilarTrademarkServiceResponse.error_response()
 
-        return FindSimilarTrademarkResponse.success_response(trademarks)
+        return FindSimilarTrademarkServiceResponse.success_response(trademarks)

@@ -4,4 +4,5 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd"
 >
     <include file="sql/0001_add_trademark_table.sql" relativeToChangelogFile="true"/>
+    <include file="sql/0002_add_trademark_index_title.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -69,7 +69,7 @@ class ApplicationContent:
         return self._extract_text(expiry_date_node)
 
     @staticmethod
-    def _extract_text(node: Element) -> Optional[str]:
+    def _extract_text(node: Optional[Element]) -> Optional[str]:
         if node is not None:
             return node.text
 
@@ -88,8 +88,8 @@ class ApplicationParsingResult(BaseModel):
     registration_date: Optional[date]
     expiry_date: Optional[date]
 
-    def is_valid(self):
-        return self.title and self.registration_date
+    def is_valid(self) -> bool:
+        return self.title is not None and self.registration_date is not None
 
 
 class ParseApplicationResponse(BaseModel):
@@ -97,7 +97,7 @@ class ParseApplicationResponse(BaseModel):
     application: Optional[ApplicationParsingResult]
 
     def is_success(self) -> bool:
-        return self.success
+        return self.success and self.application is not None
 
     @classmethod
     def success_response(cls, application: ApplicationParsingResult) -> 'ParseApplicationResponse':

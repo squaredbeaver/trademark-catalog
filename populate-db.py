@@ -3,13 +3,17 @@ import logging
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Iterator, Iterable
+from typing import Iterator, Iterable, cast
 
 from asyncpg import create_pool
 
 from trademark_finder.models.trademark import Trademark
 from trademark_finder.repositories.trademark import TrademarkRepository
-from trademark_finder.services.application_parser import ParseApplicationRequest, TrademarkApplicationParserService
+from trademark_finder.services.application_parser import (
+    ApplicationParsingResult,
+    ParseApplicationRequest,
+    TrademarkApplicationParserService,
+)
 
 XML_PATTERN = '*.xml'
 
@@ -32,7 +36,7 @@ def parse_from_directory(path: Path, parser: TrademarkApplicationParserService) 
             logger.error("Cannot parse trademark application from file %s", xml_file.absolute())
             continue
 
-        application = response.application
+        application = cast(ApplicationParsingResult, response.application)
         if not application.is_valid():
             logger.error("Skipping invalid application from file %s", xml_file.absolute())
             continue
@@ -51,7 +55,7 @@ def iterate_trademark_batches(
         trademarks: Iterable[Trademark],
         batch_size: int,
 ) -> Iterator[list[Trademark]]:
-    batch = []
+    batch: list[Trademark] = []
 
     for trademark in trademarks:
         if len(batch) < batch_size:
@@ -77,15 +81,15 @@ def init_arg_parser() -> ArgumentParser:
 
 
 async def main() -> None:
-    parser = init_arg_parser()
-    args = parser.parse_args()
+    arg_parser = init_arg_parser()
+    args = arg_parser.parse_args()
 
     connection_pool = await create_pool(args.dsn, min_size=2, max_size=2)
     trademark_repository = TrademarkRepository(
         connection_pool=connection_pool,
         logger=logger,
     )
-    parser = TrademarkApplicationParserService(
+    xml_parser_service = TrademarkApplicationParserService(
         logger=logger,
     )
 
@@ -93,7 +97,7 @@ async def main() -> None:
     batch_size = 1000
     processed_files = 0
 
-    trademarks_iterator = parse_from_directory(args.directory, parser)
+    trademarks_iterator = parse_from_directory(args.directory, xml_parser_service)
     for batch in iterate_trademark_batches(trademarks_iterator, batch_size=batch_size):
         await trademark_repository.create_many(batch)
         processed_files += batch_size
