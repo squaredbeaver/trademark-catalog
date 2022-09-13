@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "trademark-finder"
+version = "0.1.0"
+description = "Trademarks search engine"
+authors = ["Roman Chushkin <r.chushkin@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = {version = "^1.8.1", extras = ["dotenv"]}
+aiohttp = "^3.7.4"
+asyncpg = ">=0.25.0, <1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
