@@ -36,7 +36,10 @@ class FindSimilarTrademarkService:
         self._trademark_repository = trademark_repository
         self._logger = logger
 
-    async def find_similar_trademark(self, request: FindSimilarTrademarkServiceRequest) -> FindSimilarTrademarkServiceResponse:
+    async def find_similar_trademark(
+            self,
+            request: FindSimilarTrademarkServiceRequest,
+    ) -> FindSimilarTrademarkServiceResponse:
         try:
             trademarks = await self._trademark_repository.find_similar(
                 title=request.title,

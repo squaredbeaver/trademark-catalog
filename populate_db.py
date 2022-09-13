@@ -3,7 +3,7 @@ import logging
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Iterator, Iterable, cast
+from typing import cast, Iterable, Iterator
 
 from asyncpg import create_pool
 
@@ -33,12 +33,12 @@ def parse_from_directory(path: Path, parser: TrademarkApplicationParserService) 
         response = parser.parse_application(request)
 
         if not response.is_success():
-            logger.error("Cannot parse trademark application from file %s", xml_file.absolute())
+            logger.error('Cannot parse trademark application from file %s', xml_file.absolute())
             continue
 
         application = cast(ApplicationParsingResult, response.application)
         if not application.is_valid():
-            logger.error("Skipping invalid application from file %s", xml_file.absolute())
+            logger.error('Skipping invalid application from file %s', xml_file.absolute())
             continue
 
         yield Trademark(
@@ -80,7 +80,7 @@ def init_arg_parser() -> ArgumentParser:
     return parser
 
 
-async def main() -> None:
+async def main() -> None:  # noqa: WPS210
     arg_parser = init_arg_parser()
     args = arg_parser.parse_args()
 
@@ -101,7 +101,7 @@ async def main() -> None:
     for batch in iterate_trademark_batches(trademarks_iterator, batch_size=batch_size):
         await trademark_repository.create_many(batch)
         processed_files += batch_size
-        logger.info("Processed %s of %s files", processed_files, total_files)
+        logger.info('Processed %s of %s files', processed_files, total_files)
 
 
 if __name__ == '__main__':

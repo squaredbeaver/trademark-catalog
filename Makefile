@@ -22,5 +22,5 @@ stop:
 	docker-compose down
 
 validate:
-	mypy --strict .; \
+	mypy .; \
 	flake8 .

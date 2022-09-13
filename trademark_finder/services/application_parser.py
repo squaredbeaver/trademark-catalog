@@ -2,8 +2,7 @@ import re
 from datetime import date
 from logging import Logger
 from typing import Optional
-from xml.etree import ElementTree
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, fromstring as etree_fromstring, ParseError
 
 from pydantic import BaseModel
 
@@ -24,18 +23,14 @@ class ApplicationContent:
             namespaces=namespaces,
         )
         if content_node is None:
-            raise ValueError("No content")
+            raise ValueError('No content')
 
         return cls(root=content_node, namespaces=namespaces)
 
     def is_word_trademark(self) -> bool:
-        mark_feature_node = self._root.find("./MarkFeature", namespaces=self._namespaces)
+        mark_feature_node = self._root.find('./MarkFeature', namespaces=self._namespaces)
         mark_feature = self._extract_text(mark_feature_node)
-
-        if mark_feature == 'Word':
-            return True
-
-        return False
+        return mark_feature == 'Word'
 
     def get_title(self) -> Optional[str]:
         title_node = self._root.find(
@@ -53,23 +48,22 @@ class ApplicationContent:
         return self._extract_text(description_node)
 
     def get_application_number(self) -> Optional[str]:
-        application_number_node = self._root.find("./ApplicationNumber", namespaces=self._namespaces)
+        application_number_node = self._root.find('./ApplicationNumber', namespaces=self._namespaces)
         return self._extract_text(application_number_node)
 
     def get_application_date(self) -> Optional[str]:
-        application_date_node = self._root.find("./ApplicationDate", namespaces=self._namespaces)
+        application_date_node = self._root.find('./ApplicationDate', namespaces=self._namespaces)
         return self._extract_text(application_date_node)
 
     def get_registration_date(self) -> Optional[str]:
-        registration_date_node = self._root.find("./RegistrationDate", namespaces=self._namespaces)
+        registration_date_node = self._root.find('./RegistrationDate', namespaces=self._namespaces)
         return self._extract_text(registration_date_node)
 
     def get_expiry_date(self) -> Optional[str]:
-        expiry_date_node = self._root.find("./ExpiryDate", namespaces=self._namespaces)
+        expiry_date_node = self._root.find('./ExpiryDate', namespaces=self._namespaces)
         return self._extract_text(expiry_date_node)
 
-    @staticmethod
-    def _extract_text(node: Optional[Element]) -> Optional[str]:
+    def _extract_text(self, node: Optional[Element]) -> Optional[str]:
         if node is not None:
             return node.text
 
@@ -114,12 +108,12 @@ class TrademarkApplicationParserService:
             logger: Logger,
     ):
         self._logger = logger
-        self._namespace_regex = re.compile(r"\{(.*?)}")
+        self._namespace_regex = re.compile(r'\{(.*?)}')
 
     def parse_application(self, request: ParseApplicationRequest) -> ParseApplicationResponse:
         try:
-            application_node = ElementTree.fromstring(request.application_xml)
-        except ElementTree.ParseError as parsing_error:
+            application_node = etree_fromstring(request.application_xml)
+        except ParseError as parsing_error:
             self._logger.error('Cannot parse application: %s', parsing_error)
             return ParseApplicationResponse.error_response()
 

@@ -36,7 +36,10 @@ class FindExactTrademarkService:
         self._trademark_repository = trademark_repository
         self._logger = logger
 
-    async def find_exact_trademark(self, request: FindExactTrademarkServiceRequest) -> FindExactTrademarkServiceResponse:
+    async def find_exact_trademark(
+            self,
+            request: FindExactTrademarkServiceRequest,
+    ) -> FindExactTrademarkServiceResponse:
         try:
             trademark = await self._trademark_repository.find_exact(title=request.title)
         except Exception as db_error:

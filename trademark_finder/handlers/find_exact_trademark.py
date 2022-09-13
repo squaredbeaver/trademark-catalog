@@ -1,7 +1,7 @@
-from typing import Optional, Any
+from typing import Any, Optional
 
 from aiohttp import web
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, ValidationError, validator
 
 from trademark_finder.composition_root import CompositionContainer
 from trademark_finder.models.trademark import Trademark
@@ -12,7 +12,7 @@ class FindExactTrademarkHandlerRequest(BaseModel):
     title: str
 
     @validator('title')
-    def non_empty_title(cls, value: str) -> str:
+    def non_empty_title(cls, value: str) -> str:  # noqa: N805
         if not value:
             raise ValueError('title should not be empty')
         return value

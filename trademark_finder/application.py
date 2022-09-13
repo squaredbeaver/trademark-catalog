@@ -55,7 +55,7 @@ async def create_app(config: AppConfig) -> web.Application:
     exit_stack = AsyncExitStack()
     composition_container = await create_dependencies(config, exit_stack)
 
-    async def _cleanup(app: web.Application) -> None:
+    async def _cleanup(app: web.Application) -> None:  # noqa: WPS430
         await exit_stack.aclose()
 
     application = web.Application()
