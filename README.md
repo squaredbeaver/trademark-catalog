@@ -7,6 +7,11 @@
 
 ### Getting started
 
+Prepare - create docker network
+```shell
+make create-network
+```
+
 First, you should build a docker image for the backend API service:
 
 ```shell
