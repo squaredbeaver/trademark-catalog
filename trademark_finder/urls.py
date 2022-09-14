@@ -5,5 +5,5 @@ from trademark_finder.handlers.find_similar_trademark import FindSimilarTrademar
 
 urls: list[web.RouteDef] = [
     web.view('/find-exact-trademark', FindExactTrademarkHandler),
-    web.view('/find-similar-trademark', FindSimilarTrademarkHandler),
+    web.view('/find-similar-trademarks', FindSimilarTrademarkHandler),
 ]

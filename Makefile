@@ -4,6 +4,7 @@ export POSTGRESQL_DSN := "jdbc:postgresql://trademark-db:5432/trademark"
 export POSTGRESQL_DSN_WITH_AUTH := "postgres://trademark:trademark@trademark-db:5432/trademark"
 export IMAGE_NAME := "trademark-backend:latest"
 export NETWORK_NAME := "trdmrk"
+export LOAD_DATA_FROM := $(shell pwd)/trademark-data
 
 create-network:
 	docker network create -d bridge $(NETWORK_NAME)
@@ -22,8 +23,9 @@ migrate:
 		update
 
 load-data:
+	echo ${LOAD_DATA_FROM}
 	docker run -it --rm \
-		-v $(shell pwd)/trademark-data:/data \
+		-v $(LOAD_DATA_FROM):/data \
 		--network $(NETWORK_NAME) \
 		$(IMAGE_NAME) \
 		populate_db.py /data $(POSTGRESQL_DSN_WITH_AUTH)
