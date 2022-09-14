@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  trademark-db:
+    container_name: trademark-db
+    image: "postgres:14.5"
+    environment:
+      POSTGRES_DB: trademark
+      POSTGRES_USER: trademark
+      POSTGRES_PASSWORD: trademark
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - trdmrk
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  trademark-backend:
+    image: trademark-backend:latest
+    container_name: trademark-backend
+    environment:
+      PORT: 8080
+      POSTGRES_DSN: postgres://trademark:trademark@trademark-db:5432/trademark
+    depends_on:
+      - trademark-db
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - trdmrk
+
+
+networks:
+  ### You should create the network using following command:
+  ### docker network create -d bridge trdmrk
+  trdmrk:
+    external: True
+
+
+volumes:
+  pgdata:
