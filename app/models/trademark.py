@@ -1,15 +1,15 @@
 from datetime import date
-from typing import Optional
+from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
-from trademark_finder.utils.helpers import generate_id
+from app.models.id import generate_id
 
 
 class Trademark(BaseModel):
     id: str = Field(default_factory=generate_id)
-    title: str
-    description: Optional[str]
+    title: Annotated[str, StringConstraints(min_length=1)]
+    description: str | None
     application_number: str
     application_date: date
     registration_date: date

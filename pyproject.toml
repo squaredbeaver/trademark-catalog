@@ -17,6 +17,11 @@ mypy = "^1.0.0"
 wemake-python-styleguide = ">0.16.0, <1.0.0"
 safety = "^2.3.5"
 pre-commit = "^3.3.2"
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
+pytest-mock = "^3.5.1"
+pytest-asyncio = ">0.14.0, <1.0.0"
+pytest-httpserver = "^1.0.8"
 
 [build-system]
 requires = ["poetry-core"]

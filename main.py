@@ -1,8 +1,9 @@
 from aiohttp import web
 
-from trademark_finder.application import create_app
-from trademark_finder.configuration import AppConfig
+from app.application import create_application
+from app.configuration import AppConfig
 
 if __name__ == '__main__':
     config = AppConfig()
-    web.run_app(create_app(config), port=config.port)
+    application = create_application(config)
+    web.run_app(application, port=config.port)

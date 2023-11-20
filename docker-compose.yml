@@ -2,16 +2,16 @@ version: "3.7"
 services:
   trademark-db:
     container_name: trademark-db
-    image: "postgres:14.5"
+    image: "postgres:14.6"
     environment:
-      POSTGRES_DB: trademark
-      POSTGRES_USER: trademark
-      POSTGRES_PASSWORD: trademark
+      POSTGRES_DB: trademark-catalog
+      POSTGRES_USER: trademark-catalog
+      POSTGRES_PASSWORD: trademark-catalog
       PGDATA: /var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      - trdmrk
+      - trademark
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -29,11 +29,11 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - trdmrk
+      - trademark
 
 
 networks:
-  trdmrk:
+  trademark:
     external: True
 
 
