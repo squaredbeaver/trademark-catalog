@@ -1,10 +1,9 @@
 SHELL := /bin/bash
-export LIQUIBASE_IMAGE := "liquibase/liquibase:4.16.0"
+export LIQUIBASE_IMAGE := "liquibase/liquibase:4.20.0"
 export POSTGRESQL_DSN := "jdbc:postgresql://trademark-db:5432/trademark"
-export POSTGRESQL_DSN_WITH_AUTH := "postgres://trademark:trademark@trademark-db:5432/trademark"
-export IMAGE_NAME := "trademark-backend:latest"
-export NETWORK_NAME := "trdmrk"
-export LOAD_DATA_FROM := $(shell pwd)/trademark-data
+export IMAGE_NAME := "trademark-catalog:latest"
+export NETWORK_NAME := "trademark-catalog"
+export LOAD_DATA_FROM := $(shell pwd)/trademark_data
 
 create-network:
 	docker network create -d bridge $(NETWORK_NAME)
@@ -22,14 +21,6 @@ migrate:
 		--logLevel=DEBUG \
 		update
 
-load-data:
-	echo ${LOAD_DATA_FROM}
-	docker run -it --rm \
-		-v $(LOAD_DATA_FROM):/data \
-		--network $(NETWORK_NAME) \
-		$(IMAGE_NAME) \
-		populate_db.py /data $(POSTGRESQL_DSN_WITH_AUTH)
-
 build:
 	docker build --no-cache -f docker/Dockerfile -t $(IMAGE_NAME) .
 
@@ -40,5 +31,8 @@ stop:
 	docker-compose down
 
 validate:
-	@echo " --- Type checker --- "; mypy . || true; \
-	echo " --- Linter --- "; flake8 . || true;
+	poetry run mypy . || true
+	poetry run flake8 . || true
+
+safety:
+	poetry export | safety --disable-optional-telemetry-data check --disable-audit-and-monitor --stdin

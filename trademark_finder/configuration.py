@@ -1,6 +1,7 @@
 from typing import Literal
 
-from pydantic import BaseSettings, PostgresDsn
+from pydantic import PostgresDsn
+from pydantic_settings import BaseSettings
 
 
 class AppConfig(BaseSettings):

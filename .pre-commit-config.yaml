@@ -1,0 +1,38 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: double-quote-string-fixer
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-json
+      - id: check-toml
+
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: isort
+        language: python
+
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: python
+        types_or:
+          - python
+          - pyi
+        require_serial: true
+        args:
+          - --config-file=setup.cfg
+
+      - id: flake8
+        name: flake8
+        entry: flake8
+        language: system
+        types:
+          - python
+        args:
+          - --config=setup.cfg

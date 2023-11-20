@@ -16,7 +16,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   trademark-backend:
-    image: trademark-backend:latest
+    image: "trademark-backend:latest"
     container_name: trademark-backend
     environment:
       PORT: 8080
@@ -33,8 +33,6 @@ services:
 
 
 networks:
-  ### You should create the network using following command:
-  ### docker network create -d bridge trdmrk
   trdmrk:
     external: True
 
