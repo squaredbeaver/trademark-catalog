@@ -10,7 +10,8 @@ ENV PYTHONFAULTHANDLER=1 \
   POETRY_NO_INTERACTION=1 \
   POETRY_VERSION=1.7.1 \
   POETRY_CACHE_DIR='/var/cache/pypoetry' \
-  PATH="/root/.local/bin:$PATH"
+  POETRY_VIRTUALENVS_CREATE=false \
+  PATH="$PATH:/root/.local/bin"
 
 # Install system dependencies:
 RUN apt-get update && \
@@ -27,4 +28,4 @@ COPY ./poetry.lock ./pyproject.toml  ./
 # Install python dependencies
 RUN poetry install --no-interaction --no-ansi
 
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["poetry", "run", "python", "main.py"]

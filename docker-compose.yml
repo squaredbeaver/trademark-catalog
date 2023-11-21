@@ -1,7 +1,6 @@
 version: "3.7"
 services:
   trademark-db:
-    container_name: trademark-db
     image: "postgres:14.6"
     environment:
       POSTGRES_DB: trademark-catalog
@@ -16,8 +15,6 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   trademark-backend:
-    image: "trademark-backend:latest"
-    container_name: trademark-backend
     environment:
       PORT: 8080
       POSTGRES_DSN: postgres://trademark-catalog:trademark-catalog@trademark-db:5432/trademark-catalog
@@ -26,12 +23,12 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    volumes:
-      - .:/code
     ports:
       - "8080:8080"
     networks:
       - trademark
+    volumes:
+      - .:/code
 
   tests:
     environment:
@@ -49,10 +46,10 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    volumes:
-      - .:/code
     networks:
       - trademark
+    volumes:
+      - .:/code
     entrypoint:
       - bash
       - -c
