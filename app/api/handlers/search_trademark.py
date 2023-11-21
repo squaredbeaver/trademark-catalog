@@ -33,13 +33,13 @@ async def search_trademark(request: web.Request) -> web.Response:
     except ValidationError:
         return SearchTrademarkHandlerResponse.bad_request_response().as_web_response()
 
-    service_request = SearchTrademarkServiceRequest(title=handler_request.title)
+    service_request = SearchTrademarkServiceRequest.model_validate(handler_request.model_dump())
     service_response = await search_tm_service.invoke(request=service_request)
 
     if service_response.is_success():
-        return SearchTrademarkHandlerResponse.ok_response(result=service_response.result).as_web_response()
+        if not service_response.result:
+            return SearchTrademarkHandlerResponse.not_found_response().as_web_response()
 
-    if not service_response.result:
-        return SearchTrademarkHandlerResponse.not_found_response().as_web_response()
+        return SearchTrademarkHandlerResponse.ok_response(result=service_response.result).as_web_response()
 
     return SearchTrademarkHandlerResponse.internal_error_response().as_web_response()

@@ -32,12 +32,13 @@ async def register_trademark(request: web.Request) -> web.Response:
     composition_container: CompositionContainer = request.config_dict['composition_container']
     register_tm_service: RegisterTrademarkService = composition_container.register_tm_service
 
+    request_body = await request.json()
     try:
-        handler_request = RegisterTrademarkHandlerRequest.model_validate(request.query)
+        handler_request = RegisterTrademarkHandlerRequest.model_validate(request_body)
     except ValidationError:
         return RegisterTrademarkHandlerResponse.bad_request_response().as_web_response()
 
-    service_request = RegisterTrademarkServiceRequest.model_validate(handler_request)
+    service_request = RegisterTrademarkServiceRequest.model_validate(handler_request.model_dump())
     service_response = await register_tm_service.invoke(request=service_request)
 
     if service_response.is_success() and service_response.result is not None:

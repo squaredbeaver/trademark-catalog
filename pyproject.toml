@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "trademark-catalog"
 version = "1.0.0"
-description = "Trademarks search engine"
+description = "trademark-catalog"
 authors = ["Roman Chushkin <r.chushkin@gmail.com>"]
 readme = "README.md"
 
@@ -22,6 +22,8 @@ pytest-cov = "^4.0.0"
 pytest-mock = "^3.5.1"
 pytest-asyncio = ">0.14.0, <1.0.0"
 pytest-httpserver = "^1.0.8"
+yoyo-migrations = "^8.2.0"
+psycopg2 = "^2.9.6"
 
 [build-system]
 requires = ["poetry-core"]
