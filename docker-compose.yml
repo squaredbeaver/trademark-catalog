@@ -4,8 +4,9 @@ services:
     container_name: trademark-db
     image: "postgres:14.6"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: trademark-catalog
+      POSTGRES_USER: trademark-catalog
+      POSTGRES_PASSWORD: trademark-catalog
       PGDATA: /var/lib/postgresql/data
     ports:
       - "5432:5432"
@@ -19,16 +20,45 @@ services:
     container_name: trademark-backend
     environment:
       PORT: 8080
-      POSTGRES_DSN: postgres://trademark:trademark@trademark-db:5432/trademark
+      POSTGRES_DSN: postgres://trademark-catalog:trademark-catalog@trademark-db:5432/trademark-catalog
     depends_on:
       - trademark-db
     build:
       context: .
       dockerfile: docker/Dockerfile
+    volumes:
+      - .:/code
     ports:
       - "8080:8080"
     networks:
       - trademark
+
+  tests:
+    environment:
+      PORT: 8080
+      POSTGRES_DSN: postgres://trademark-catalog:trademark-catalog@trademark-db:5432/trademark-catalog
+      TEST_DB_ADMIN_USER: trademark-catalog
+      TEST_DB_ADMIN_PASSWORD: trademark-catalog
+      TEST_DB_HOST: trademark-db
+      TEST_DB_PORT: 5432
+      TEST_DB_NAME: trademark-catalog
+    stdin_open: true
+    tty: true
+    depends_on:
+      - trademark-db
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/code
+    networks:
+      - trademark
+    entrypoint:
+      - bash
+      - -c
+      - $$@
+    command:
+      - echo "Run manually with `docker compose run --rm tests -- poetry run pytest tests`"
 
 
 networks:

@@ -14,32 +14,17 @@ ENV PYTHONFAULTHANDLER=1 \
 
 # Install system dependencies:
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y bash curl build-essential && \
+    apt-get install --no-install-recommends -y bash curl build-essential libpq-dev && \
     curl -sSL https://install.python-poetry.org | python - && \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false && \
     apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 
-# Setup permissions
-RUN groupadd -r web && \
-    useradd -d /code -r -g web web && \
-    chown web:web -R /code
-
 # Copy requirements to cache them in docker layer
-COPY --chown=web:web ./poetry.lock ./pyproject.toml  ./
+COPY ./poetry.lock ./pyproject.toml  ./
 
 # Install python dependencies
-RUN poetry export --only main --without-urls --without-hashes --output=requirements.txt && \
-    pip install --no-cache-dir -r requirements.txt
+RUN poetry install --no-interaction --no-ansi
 
-# Run as non-root user
-USER web
-
-# Copy application code
-COPY --chown=web:web trademark_finder trademark_finder/
-COPY --chown=web:web main.py ./
-COPY --chown=web:web populate_db.py ./
-
-ENTRYPOINT ["python"]
-CMD ["main.py"]
+ENTRYPOINT ["python", "main.py"]

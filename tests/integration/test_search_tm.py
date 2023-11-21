@@ -17,11 +17,12 @@ async def test_search_exact_success(
         sample_trademark_data: dict[str, Any],
         sample_trademark: None,
 ):
-    response = await app_client.get(f'/trademark?title={sample_trademark_data['title']}')
+    title = sample_trademark_data['title']
+    response = await app_client.get(f'/trademark?title={title}')
     assert response.status == 200
 
     response_body = await response.json()
-    assert response_body['result'][0]['title'] == sample_trademark_data['title']
+    assert response_body['result'][0]['title'] == title
 
 
 async def test_search_similar_success(

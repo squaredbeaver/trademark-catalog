@@ -11,12 +11,12 @@ from app.configuration import AppConfig
 
 @pytest.fixture(scope='session')
 def test_db_admin_user() -> str:
-    return 'postgres'
+    return 'trademark-catalog'
 
 
 @pytest.fixture(scope='session')
 def test_db_admin_password() -> str:
-    return 'postgres'
+    return 'trademark-catalog'
 
 
 @pytest.fixture(scope='session')

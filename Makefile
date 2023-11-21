@@ -7,6 +7,8 @@ export IMAGE_NAME := "trademark-catalog:latest"
 export NETWORK_NAME := "trademark"
 export LOAD_DATA_FROM := $(shell pwd)/trademark_data
 
+.PHONY: tests
+
 migrate:
 	docker run -it --rm \
 		-v $(shell pwd)/migrations:/liquibase/changelog \
@@ -36,4 +38,7 @@ validate:
 	poetry run flake8 . || true
 
 safety:
-	poetry export | safety --disable-optional-telemetry-data check --disable-audit-and-monitor --stdin
+	poetry export | poetry run safety --disable-optional-telemetry-data check --disable-audit-and-monitor --stdin
+
+tests:
+	docker compose run --rm tests -- poetry run pytest tests

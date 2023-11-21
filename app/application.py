@@ -24,7 +24,11 @@ async def create_application(config: AppConfig) -> web.Application:
     logger = logging.getLogger()
     logger.setLevel(config.logging_level)
 
-    db_connection_pool: Pool = await create_pool(dsn=str(config.postgres_dsn))
+    db_connection_pool: Pool = await create_pool(
+        dsn=str(config.postgres_dsn),
+        min_size=0,
+        max_size=10,
+    )
     exit_stack.push_async_callback(db_connection_pool.close)
 
     db_session_factory = DatabaseSessionFactory(

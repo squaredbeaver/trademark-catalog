@@ -1,7 +1,8 @@
-## Simple exact/fuzzy search engine for registered trademarks
+## Simple catalog of registered trademarks
 
 ### Key features
 
+- Register trademark
 - Exact string search
 - Fuzzy string search (using trigrams)
 
@@ -12,7 +13,7 @@ Prepare - create docker network
 make create-network
 ```
 
-First, you should build a docker image for the backend API service:
+To build a docker image for the backend API service run:
 
 ```shell
 make build
@@ -30,23 +31,63 @@ Also you should run the database migrations
 make migrate
 ```
 
-and populate the database with data
-
-```shell
-make load-data LOAD_DATA_FROM=/path/to/directory/with/xml/files
-```
-
 ### API
 
-#### Find a trademark with an exactly matching title
+#### Register a trademark
 
 ```
-GET /find-exact-trademark
+POST /trademark
+```
+
+Body params (json):
+
+- `title` - string, trademark title
+- `description` - string, trademark description
+- `application_number` - string, trademark application number
+- `registration_date` - date in ISO format, trademark registration date
+- `expiry_date` - date in ISO format, expiry date
+
+Response HTTP codes:
+- `201` - Trademark registered successfully
+- `400` - Invalid request
+- `409` - Trademark with such name is already registered
+- `500` - Internal server error
+
+Response format - `json`:
+
+- `result` - `trademark` object
+    - `id` - string, unique identifier of trademark record
+    - `title` - string, trademark title
+    - `description` - string, trademark description
+    - `application_number` - string, trademark application number
+    - `registration_date` - date in ISO format, trademark registration date
+    - `expiry_date` - date in ISO format, expiry date
+
+Example:
+
+```json
+{
+  "result": {
+    "id": "7d92e944-899d-4c24-bc63-4bacc270f1ad",
+    "title": "WAVE",
+    "description": "blah",
+    "application_number": "018188180",
+    "registration_date": "2020-06-11",
+    "expiry_date": "2030-01-28"
+  }
+}
+```
+
+#### Find a trademark by title
+
+```
+GET /trademark
 ```
 
 Query params:
 
 - `title` - string, trademark title to match with
+- `exact_match` - boolean, search for an exact match (default is true)
 
 Response HTTP codes:
 - `200` - Success - trademark with given title has been found
@@ -56,9 +97,10 @@ Response HTTP codes:
 
 Response format - `json`:
 
-- `trademark`
+- `result` - list of trademark objects
     - `id` - string, unique identifier of trademark record
     - `title` - string, trademark title
+    - `description` - string, trademark description
     - `application_number` - string, trademark application number
     - `registration_date` - date in ISO format, trademark registration date
     - `expiry_date` - date in ISO format, expiry date
@@ -67,55 +109,11 @@ Example:
 
 ```json
 {
-  "trademark": {
-    "id": "66e01b8d-5df8-4ad7-a672-8d33f427f6cb",
-    "title": "WATA WAVE",
-    "application_number": "018221920",
-    "registration_date": "2020-07-22",
-    "expiry_date": "2030-04-06"
-  }
-}
-```
-
-#### Find trademarks with similar titles
-
-```
-GET /find-similar-trademarks
-```
-
-Query params:
-
-- `title` - string, trademark title to fuzzy-match with
-
-Response HTTP codes:
-- `200` - Success
-- `400` - Invalid request
-- `500` - Internal server error
-
-Response format - `json`:
-
-- `trademarks` - list of `trademark` objects, like in `/find-exact-trademark` request
-    - `id` - string, unique identifier of trademark record
-    - `title` - string, trademark title
-    - `application_number` - string, trademark application number
-    - `registration_date` - date in ISO format, trademark registration date
-    - `expiry_date` - date in ISO format, expiry date
-
-Example:
-
-```json
-{
-  "trademarks": [
-    {
-      "id": "7d92e944-899d-4c24-bc63-4bacc270f1ad",
-      "title": "WAVE",
-      "application_number": "018188180",
-      "registration_date": "2020-06-11",
-      "expiry_date": "2030-01-28"
-    },
+  "result": [
     {
       "id": "66e01b8d-5df8-4ad7-a672-8d33f427f6cb",
       "title": "WATA WAVE",
+      "description": "blah",
       "application_number": "018221920",
       "registration_date": "2020-07-22",
       "expiry_date": "2030-04-06"

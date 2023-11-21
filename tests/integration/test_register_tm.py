@@ -10,8 +10,9 @@ async def test_register_success(
     response = await app_client.post('/trademark', json=sample_trademark_data)
     assert response.status == 201
 
-    response = await app_client.get(f'/trademark?title={sample_trademark_data['title']}')
+    title = sample_trademark_data['title']
+    response = await app_client.get(f'/trademark?title={title}')
     assert response.status == 200
 
     response_body = await response.json()
-    assert response_body['result'][0]['title'] == sample_trademark_data['title']
+    assert response_body['result'][0]['title'] == title
