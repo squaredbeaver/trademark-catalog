@@ -1,5 +1,7 @@
 import os
 from importlib import util
+from importlib.machinery import ModuleSpec
+from typing import cast
 
 import pytest
 from psycopg2 import connect
@@ -69,8 +71,9 @@ def drop_create_db(
 
 def apply_migrations(postgres_dsn: str, migrations_module: str = 'migrations.sql') -> None:
     """Применить миграции БД."""
-    migrations_location = util.find_spec(migrations_module)
-    migrations = read_migrations(migrations_location.submodule_search_locations[0])
+    migrations_module_spec = cast(ModuleSpec, util.find_spec(migrations_module))
+    locations = cast(list[str], migrations_module_spec.submodule_search_locations)
+    migrations = read_migrations(locations[0])
 
     backend = get_backend(postgres_dsn)
     with backend.lock():

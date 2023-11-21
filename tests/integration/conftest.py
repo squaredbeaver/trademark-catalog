@@ -1,9 +1,9 @@
 from datetime import date
-from typing import AsyncGenerator
+from typing import Any, AsyncGenerator
 
 import pytest
 from aiohttp import web
-from aiohttp.test_utils import BaseTestServer, TestServer, TestClient
+from aiohttp.test_utils import BaseTestServer, TestClient, TestServer
 
 from app.application import create_application
 from app.configuration import AppConfig
@@ -35,7 +35,7 @@ def test_db_name() -> str:
 
 
 @pytest.fixture
-def app_config(postgres_dsn: str):
+def app_config(postgres_dsn: str) -> AppConfig:
     return AppConfig(
         postgres_dsn=postgres_dsn,
     )
@@ -62,7 +62,7 @@ async def app_client(app_server: TestServer) -> AsyncGenerator[TestClient, None]
 
 
 @pytest.fixture
-def sample_trademark_data() -> dict[str,]:
+def sample_trademark_data() -> dict[str, Any]:
     sample_date = date.today().isoformat()
     return {
         'title': 'titlea',

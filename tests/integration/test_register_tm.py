@@ -6,7 +6,7 @@ from aiohttp.test_utils import TestClient
 async def test_register_success(
         app_client: TestClient,
         sample_trademark_data: dict[str, Any],
-):
+) -> None:
     response = await app_client.post('/trademark', json=sample_trademark_data)
     assert response.status == 201
 
